@@ -95,6 +95,14 @@ body{
     border-bottom: none;
   }
 
+/*Style for the not found message*/
+.notFound{
+  text-align: center;
+  color: #888;
+  font-size: 50px;
+  font-weight: bold;
+}
+/*-------------------------------*/
 .pagination{
   margin: 40px 0 0 0;
   text-align: center;
