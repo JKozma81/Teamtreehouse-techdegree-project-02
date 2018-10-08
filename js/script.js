@@ -14,6 +14,7 @@ const studentsArray = [];
 let workarray = [];
 
 
+
 const createDomElements = () => {
 // Searchbox
   const searchContainer = document.createElement('div');
@@ -34,7 +35,7 @@ const createDomElements = () => {
   const itemList = document.createElement('ul');
   paginationContainer.appendChild(itemList);
 
-  itemList.addEventListener('click', clicked);   // Adding event listener and functionality
+  itemList.addEventListener('click', clicked);   // Adding event listener for clicking the links
 
   for (let i = 1; i <= linkNumber; i++) {
       let li = document.createElement('li');
@@ -46,7 +47,6 @@ const createDomElements = () => {
   }
 
 // Message
-  
   messageBox.style.color = '#888';
   messageBox.style.fontSize = '50px';
   messageBox.style.fontWeight = 'bold';
@@ -152,6 +152,9 @@ const activePage = () => {
 }
 
 // Gives back the search result for name or email
+/*
+"When the "Search" button is clicked, the list of students is filtered to match the search value. For example if the name Phillip is typed into the box, list all students whose name or email includes Phillip."
+*/
 const searchStudents = (query) => {
   return studentsArray.filter(function(element) {
     const regex = new RegExp(query, 'gi');
@@ -162,7 +165,9 @@ const searchStudents = (query) => {
 const searching = () => {
   pageToDisplay = 1;
   activePage();
+  
   searchText = searchInputField.value;
+
   workarray = searchStudents(searchText);
   showStudents(workarray, pageToDisplay);
 
