@@ -1,195 +1,181 @@
-/******************************************
-Treehouse Techdegree:
-FSJS project 2 - List Filter and Pagination
-******************************************/
-
-// Variables to work with
+document.addEventListener('DOMContentLoaded', () => {
+// Variables
 const page = document.querySelector('div.page');
 const studentCards = document.querySelectorAll('li.student-item');
-let linkList = null;
-let paginationContainer = null;
-let itemList = null;
+const searchInputField = document.createElement('input');
 
 const studentsPerPage = 10;
 let pageToDisplay = 1;
+let linkList = null;
+let noSearchResult = null;
 let searchText = '';
+const studentsArray = [];
+let workarray = [];
 
 
+const createDomElements = () => {
+// Searchbox
+  const searchContainer = document.createElement('div');
+  searchContainer.className = 'student-search';
+  page.firstElementChild.appendChild(searchContainer);
+  searchInputField.placeholder = 'Search for students...';
+  searchContainer.appendChild(searchInputField);
+  const button = document.createElement('button');
+  button.textContent = 'Search';
+  searchContainer.appendChild(button);
 
+// Pagination links
+  let linkNumber = Math.ceil(studentCards.length / studentsPerPage);
 
-showStudents(studentCards, pageToDisplay, createPagination);
-createSearchBox();
-activePage();
+  paginationContainer = document.createElement('div');
+  paginationContainer.className = 'pagination';
+  page.appendChild(paginationContainer);
+  const itemList = document.createElement('ul');
+  paginationContainer.appendChild(itemList);
 
+  itemList.addEventListener('click', clicked);   // Adding event listener and functionality
 
-// Displaying the correct items,
-// and calls a function to create pagination when its provided in the function invoke
-function showStudents(list, page, fn) {
-    let counter2 = 0;
+  for (let i = 1; i <= linkNumber; i++) {
+      let li = document.createElement('li');
+      itemList.appendChild(li);
+      let a = document.createElement('a');
+      a.href = '#';
+      a.textContent = i;
+      li.appendChild(a);
+  }
 
-    for (let i = 0; i <= list.length - 1; i++) {
-        if (searchText === '') {
-            if (i >= (studentsPerPage * page) - studentsPerPage  && i < page * studentsPerPage) {
-                list[i].style.display = '';
-            } else {
-                list[i].style.display = 'none';
-            }
-        } else {
-            if (i >= (studentsPerPage * page) - studentsPerPage  && i < page * studentsPerPage && 
-                (list[i].firstElementChild.children[1].textContent.includes(searchText) || 
-
-                i >= (studentsPerPage * page) - studentsPerPage  && i < page * studentsPerPage &&
-                list[i].firstElementChild.children[2].textContent.includes(searchText))) {
-
-                    list[i].style.display = '';
-
-            } else {
-                list[i].style.display = 'none';
-                counter2++;
-            }
-        }
-    }
-
-    if (searchText !== '' && counter2 === list.length) {
-        createMessage();
-    } else if (searchText !== '' && counter2 !== list.length) {
-        removeMessage();
-    }
-
-    if (fn !== undefined) {
-        fn(list);
-    }
-}
-
-// Creating DOM elements
-
-// Creating search box
-function createSearchBox() {
-    const searchContainer = document.createElement('div');
-    searchContainer.className = 'student-search';
-    page.firstElementChild.appendChild(searchContainer);
-    const searchInputField = document.createElement('input');
-    searchInputField.placeholder = 'Search for students...';
-    searchContainer.appendChild(searchInputField);
-    const button = document.createElement('button');
-    button.textContent = 'Search';
-    searchContainer.appendChild(button);
+// Message
+  const messageBox = document.createElement('div');
+  messageBox.style.color = '#888';
+  messageBox.style.fontSize = '50px';
+  messageBox.style.fontWeight = 'bold';
+  messageBox.style.textAlign = 'center';
+  page.insertBefore(messageBox, paginationContainer);
+  const message = document.createElement('p');
+  message.textContent = 'Searched student not found!';
+  message.style.paddingTop = '150px';
+  message.style.paddingBottom = '150px';
+  messageBox.appendChild(message);
+  messageBox.style.display = 'none';
+  messageBox.className = 'noResult';
 
 // Adding event listeners
-    searchInputField.addEventListener('keyup', searchStudents);
-    button.addEventListener('click', searchStudents);
+  searchInputField.addEventListener('keyup', searching);
+  button.addEventListener('click', searching);
 
+  linkList = document.querySelectorAll('div.pagination ul li');
+  noSearchResult = document.querySelector('div.page div.noResult');
+
+  activePage();
+  studentsArray.push(...studentCards);
+  showStudents(studentsArray, pageToDisplay);
 }
 
-// Creating message
-function createMessage() {
-    if (document.querySelector('div.notFound') === null) {
-        const messageBox = document.createElement('div');
-        messageBox.className = 'notFound';
-        page.insertBefore(messageBox, paginationContainer);
-        const message = document.createElement('p');
-        message.textContent = 'Searched student not found!';
-        messageBox.appendChild(message);
-    }
-}
 
-// Removing message
-function removeMessage() {
-    const boxToRemove = document.querySelector('div.notFound');
-    const messageToRemove = document.querySelector('div.notFound p')
-    if (boxToRemove !== null) {
-        boxToRemove.removeChild(messageToRemove);
-        page.removeChild(boxToRemove);
-    }
-}
+// Showing students
+const showStudents = (list, pageNumber) => {
+  let counter = 0;
 
-// Creating pagination links
-function createPagination(list) {
-    let linkNumber = 1;
-    let counter = 1;
-
-    if (searchText === '') {
-        linkNumber = Math.ceil(list.length / studentsPerPage);
-    } else { 
-        for (let i = 0; i < list.length; i++) {
-            if (list[i].style.display === '') {
-                counter++;
-            }
-        }
-        linkNumber = Math.ceil(counter / studentsPerPage)        
-    }
-    
-    function createLinks() {
-        paginationContainer = document.createElement('div');
-        paginationContainer.className = 'pagination';
-        page.appendChild(paginationContainer);
-        itemList = document.createElement('ul');
-        paginationContainer.appendChild(itemList);
-    
-        itemList.addEventListener('click', clicked);   // Adding event listener and functionality
-
-        for (let i = 1; i <= linkNumber; i++) {
-            let li = document.createElement('li');
-            itemList.appendChild(li);
-            let a = document.createElement('a');
-            a.href = '#';
-            a.textContent = i;
-            li.appendChild(a);
-        }  
-        linkList = document.querySelectorAll('div.pagination ul li');     
-    }
-
-    function removeLinks() {
-        page.removeChild(paginationContainer); 
-        paginationContainer = null;
-        itemList = null;
-    }
-
-    if (paginationContainer === null && linkList === null) {
-        createLinks();
+  for (let i = 0; i < studentCards.length; i++) {
+    if (list.includes(studentCards[i])) {
+      counter++;
+      if (counter <= studentsPerPage * pageNumber && counter > (studentsPerPage * pageNumber) - studentsPerPage) {
+        studentCards[i].style.display = '';
+      } else {
+        studentCards[i].style.display = 'none';
+      }
     } else {
-        removeLinks();
-        createLinks();
+      studentCards[i].style.display = 'none';
     }
+  }
+  showPagination();
+}
+
+// Show pagination links
+const showPagination = () => {
+  let linksToShow = 1;
+
+  if (searchText === '') {
+    for (let i = 0; i < linkList.length; i++) {
+      linkList[i].style.display = '';
+    }
+  } else if (searchText !== '' && workarray.length !== 0) {    
+    linksToShow = Math.ceil(workarray.length / studentsPerPage);
+
+    for (let i = 0; i < linkList.length; i++) {
+      if (i < linksToShow) {
+        linkList[i].style.display = '';  
+      } else {
+        linkList[i].style.display = 'none';
+      }
+    }
+  } else {
+    for (let i = 0; i < linkList.length; i++) {
+      if (i === linksToShow - 1) {
+        linkList[i].style.display = '';  
+      } else {
+        linkList[i].style.display = 'none';
+      }
+    }
+  }
+
 }
 
 
-// Functions for functionality
+// FUNCTIONALITY
+// Click function
+const clicked = (e) => {
+  let clickedElement = e.target;
 
-// Clicking function
-function clicked(e) {
-    let clickedElement = e.target;
+  if (clickedElement.tagName === 'A') {
+      pageToDisplay = parseInt(clickedElement.textContent);
 
-    if (clickedElement.tagName === 'A') {
-        pageToDisplay = parseInt(clickedElement.textContent);
-        showStudents(studentCards, pageToDisplay);
-        activePage();
-    }
+      if (workarray.length === 0 && searchText === '') {
+        showStudents(studentsArray, pageToDisplay);
+      } else {
+        showStudents(workarray, pageToDisplay);
+      }
+
+      activePage();
+  }
 }
 
 // Applying the active class to the showed page
-function activePage() {
-    for (let i = 0; i < linkList.length; i++) {
-        if (i === pageToDisplay - 1) {
-            linkList[i].firstElementChild.className = 'active';
-        } else {
-            linkList[i].firstElementChild.className = '';
-        }
-    }
+const activePage = () => {
+  for (let i = 0; i < linkList.length; i++) {
+      if (i === pageToDisplay - 1) {
+          linkList[i].firstElementChild.className = 'active';
+      } else {
+          linkList[i].firstElementChild.className = '';
+      }
+  }
 }
 
-// Search function
-function searchStudents() {
-    searchText = document.querySelector('input').value.toLowerCase();
-    showStudents(studentCards, pageToDisplay, createPagination);
-    activePage();    
+// Gives back the search result for name or email
+const searchStudents = (query) => {
+  return studentsArray.filter(function(element) {
+    const regex = new RegExp(query, 'gi');
+    return element.firstElementChild.children[1].textContent.match(regex) ||  element.firstElementChild.children[2].textContent.match(regex)})
+}
+
+// Displaying search result or message
+const searching = () => {
+  pageToDisplay = 1;
+  activePage();
+  searchText = searchInputField.value;
+  workarray = searchStudents(searchText);
+  showStudents(workarray, pageToDisplay);
+
+  if (searchText !== '' && workarray.length === 0) {
+    noSearchResult.style.display = '';
+  } else {
+    noSearchResult.style.display = 'none';
+  }
 }
 
 
+// Start
+createDomElements();
 
-
-
-
-
-
+})
 
