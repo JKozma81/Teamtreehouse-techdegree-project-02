@@ -3,11 +3,12 @@ document.addEventListener('DOMContentLoaded', () => {
 const page = document.querySelector('div.page');
 const studentCards = document.querySelectorAll('li.student-item');
 const searchInputField = document.createElement('input');
+const messageBox = document.createElement('div');
+
 
 const studentsPerPage = 10;
 let pageToDisplay = 1;
 let linkList = null;
-let noSearchResult = null;
 let searchText = '';
 const studentsArray = [];
 let workarray = [];
@@ -45,7 +46,7 @@ const createDomElements = () => {
   }
 
 // Message
-  const messageBox = document.createElement('div');
+  
   messageBox.style.color = '#888';
   messageBox.style.fontSize = '50px';
   messageBox.style.fontWeight = 'bold';
@@ -64,7 +65,6 @@ const createDomElements = () => {
   button.addEventListener('click', searching);
 
   linkList = document.querySelectorAll('div.pagination ul li');
-  noSearchResult = document.querySelector('div.page div.noResult');
 
   activePage();
   studentsArray.push(...studentCards);
@@ -167,9 +167,9 @@ const searching = () => {
   showStudents(workarray, pageToDisplay);
 
   if (searchText !== '' && workarray.length === 0) {
-    noSearchResult.style.display = '';
+    messageBox.style.display = '';
   } else {
-    noSearchResult.style.display = 'none';
+    messageBox.style.display = 'none';
   }
 }
 
