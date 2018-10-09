@@ -5,4 +5,4 @@ Used technologies: HTML/CSS/JavaScript(ES6)
 
 In this project the goal was to demonstrate our JavaScript DOM Manipulation knowledge, by creating a pagination to display max 10 students on the page and implement a worcking seach bar.
 
-The HTML and CSS files are provided by Treehouse, but the JS file are self writen.
+The HTML and CSS files are provided by Treehouse, but the JS file is self writen.
